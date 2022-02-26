@@ -157,7 +157,7 @@ class MemTrace:
         if not debug:  # Prevent ourselves from showing up in the list.
             filters.append(tracemalloc.Filter(False, "*razortrace*", all_frames=True))
         self.cleanup()
-        print('\n=============================== leaks detected ===============================\n')
+        print('\n=============================== detections ===============================\n')
         filtered_stats = self.snapshots[-1].filter_traces(filters).compare_to(self.snapshots[-2], 'traceback')
         for i, d in enumerate(filtered_stats):
             for tb in d.traceback:
@@ -189,7 +189,7 @@ class MemTrace:
                 total = max(sizes)
                 average = sum(sizes) / len(sizes)
                 print(
-                    i, stat['file'],
+                    stat['file'],
                     'line:', stat['line'],
                     'command:', stat['command'],
                     'average:', average,
@@ -197,11 +197,17 @@ class MemTrace:
                     '\n'
                 )
                 if traceback:
-                    print('\t\t\t-----trace-----\n')
+                    print('\t\t\t\t\t\t\t-----trace-----\n')
                     for line in stat['traceback']:
                         print(line)
                     print('\n')
+                if debug:
+                    print('\t\t\t\t\t\t\t-----sizes-----\n')
+                    sizes.reverse()
+                    print(' '.join(str(e) for e in sizes), '\n')
+                print('\n--------------------------------------------------------------------------\n')
                 self.filtered_statistics.append(stat)
+        print('\n==========================================================================\n')
         return self
 
     def stop(self):
