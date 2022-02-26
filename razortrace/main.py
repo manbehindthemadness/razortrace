@@ -52,9 +52,6 @@ class MemTrace:
         self.snapshots = list()
         if here:
             self.here = str(here)
-        if not self.running:
-            self.tracer.start(10)
-            self.running = True
 
     def _take_snap(self):
         """
@@ -143,6 +140,7 @@ class MemTrace:
             self.tracer.start(10)
             self.running = True
         self._take_snap()
+        return self
 
     def report(self, traceback: bool = False, strict: bool = True, debug: bool = False):
         """
@@ -220,6 +218,10 @@ class MemTrace:
         Clears out the memory samples.
         """
         self.tracer.clear_traces()
+        self.snapshots = list()
+        self.filtered_statistics = list()
+        self.statistics = dict()
+        self.cleanup()
         return self
 
     def reset(self):
@@ -231,9 +233,11 @@ class MemTrace:
         return self
 
 
-def probe(traceback: bool = False, strict: bool = False, clear: bool = False, debug: bool = False):
+def probe(trigger: str = '', traceback: bool = False, strict: bool = True, clear: bool = False, debug: bool = False):
     """
     This is an easy-to-use decorator that will perform a basic memory test.
+
+    param trigger: Specifies via the environment if this trace should be performed.
     param traceback: Include tracebacks in report?
     param strict: Only show results that never reclaim memory?
     param clear: Clears the memory samples each run.
@@ -248,18 +252,23 @@ def probe(traceback: bool = False, strict: bool = False, clear: bool = False, de
         """
         filepath = inspect.getfile(callback)
         trace = tracer(filepath)
-        trace.sample()
 
         def wrapper(*args, **kwargs):
             """
             :return: Instance of the callback.
             """
-            if clear:
-                trace.clear()
+            enable = True
+            if trigger:
+                enable = os.getenv(trigger)
+            if enable:
+                if clear:
+                    trace.clear()
+                trace.sample()
             callback(*args, **kwargs)
-            trace.sample()
-            trace.report(traceback=traceback, strict=strict, debug=debug)
-            callback.trace = trace
+            if enable:
+                trace.sample()
+                trace.report(traceback=traceback, strict=strict, debug=debug)
+                callback.trace = trace
             return callback
         return wrapper
     return callback_wrapper

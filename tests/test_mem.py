@@ -12,7 +12,7 @@ from razortrace import Probe, probe
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 IMG = Path(HERE + '/lightbulb.png')
-HOLD = None
+HOLD = list()
 
 
 class Leak:
@@ -32,38 +32,40 @@ class Leak:
         self.probe.sample()
         while count:
             img = Image.open(IMG)
-            img = img.load()
             self.images.append(img)
             count -= 1
         self.probe.sample()
         self.probe.report(traceback=True, debug=True)
-        return self
+        del img
+        return self.probe.filtered_statistics
 
-
-LEAK = Leak()
+    def clear(self):
+        """
+        Purges our memory.
+        """
+        self.probe.reset()
+        for idx, image in enumerate(self.images):
+            image.close()
+            self.images[idx] = None
 
 
 def test_image():
     """
     This will test for an image memory leak.
     """
-    global HOLD
-    global LEAK
-    HOLD = LEAK.load(1000)
-    assert len(HOLD.probe.filtered_statistics) == 3
-    HOLD.images = None
-    HOLD.probe.clear()
-    HOLD = None
-    del LEAK
+    leak = Leak()
+    stats = list(leak.load(1000))
+    leak.clear()
+    del leak
+    assert len(stats) == 3
 
 
-@probe(traceback=True, debug=True)
+@probe(trigger='TRACE_TEXT', traceback=True, clear=True, debug=True)
 def text():
     """
     Creates a memory leak from a text file.
     """
     global HOLD
-    HOLD = list()
     with open(Path(HERE + '/text.txt'), "r") as txt:
         for line in txt.readlines():
             HOLD.append(line)
@@ -76,5 +78,19 @@ def test_text():
     """
     Fires off the above logic into a unit test.
     """
+    os.environ["TRACE_TEXT"] = "1"  # Enable trace.
     txt = text()
-    assert len(txt.trace.filtered_statistics) == 9
+    stats = txt.trace.filtered_statistics
+    txt.trace.reset()
+    assert len(stats) == 2
+
+
+def test_disable():
+    """
+    As the trace was disabled in the last test, this will confirm that we are properly cleaning up
+    when not in use.
+    """
+    os.environ.pop("TRACE_TEXT")  # Disable trace so we can confirm cleanup works.
+    txt = text()
+    stats = txt.trace.filtered_statistics
+    assert len(stats) == 0
