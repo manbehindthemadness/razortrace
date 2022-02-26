@@ -7,7 +7,7 @@ We are going to use PIL to load an image into a list creating a predictable memo
 import os
 from pathlib import Path
 from PIL import Image
-from razortrace import Probe
+from razortrace import Probe, probe
 
 
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -37,7 +37,6 @@ class Leak:
             count -= 1
         self.probe.sample()
         self.probe.report(traceback=True, debug=True)
-        # self.probe.comp_n_show(6)
         return self
 
 
@@ -49,5 +48,33 @@ def test_basic():
     This will test for a basic memory leak.
     """
     global HOLD
+    global LEAK
     HOLD = LEAK.load(1000)
     assert len(HOLD.probe.filtered_statistics) == 3
+    HOLD.images = None
+    HOLD.probe.clear()
+    HOLD = None
+    del LEAK
+
+
+@probe(traceback=True, debug=True)
+def text():
+    """
+    Creates a memory leak from a text file.
+    """
+    global HOLD
+    HOLD = list()
+    with open(Path(HERE + '/text.txt'), "r") as txt:
+        for line in txt.readlines():
+            HOLD.append(line)
+    for cycle in range(0, 1000):
+        HOLD.append([cycle, HOLD])
+    return
+
+
+def test_text():
+    """
+    Fires off the above logic into a unit test.
+    """
+    txt = text()
+    assert len(txt.trace.filtered_statistics) == 9

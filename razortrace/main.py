@@ -8,6 +8,7 @@ import gc
 import os
 import linecache
 import tracemalloc
+import inspect
 
 
 def display_top(snapshot, key_type='lineno', limit=100):
@@ -40,16 +41,20 @@ class MemTrace:
     """
     An easy way to call tracemalloc
     """
+    running = False
     runner = 0
     here = os.path.abspath(os.path.dirname(__file__))
     statistics = dict()
     filtered_statistics = list()
+    tracer = tracemalloc
 
     def __init__(self, here: [str, None] = None):
         self.snapshots = list()
         if here:
             self.here = str(here)
-        tracemalloc.start(10)
+        if not self.running:
+            self.tracer.start(10)
+            self.running = True
 
     def take_snap(self):
         """
@@ -197,3 +202,63 @@ class MemTrace:
                     print('\n')
                 self.filtered_statistics.append(stat)
         return self
+
+    def stop(self):
+        """
+        Terminates the memory sampling
+        """
+        if self.running:
+            self.tracer.stop()
+            self.running = False
+        return self
+
+    def clear(self):
+        """
+        Clears out the memory samples.
+        """
+        self.tracer.clear_traces()
+        return self
+
+    def reset(self):
+        """
+        Stops and clears the samples.
+        """
+        self.stop()
+        self.clear()
+        return self
+
+
+def probe(traceback: bool = False, strict: bool = False, clear: bool = False, debug: bool = False):
+    """
+    This is an easy-to-use decorator that will perform a basic memory test.
+    :param traceback: Include tracebacks in report?
+    :param strict: Only show results that never reclaim memory?
+    :param clear: Clears the memory samples each run.
+    :param debug: Include the razortrace folder in results?
+    :return: Instance of the callback.
+    """
+    tracer = MemTrace
+
+    def callback_wrapper(callback):
+        """
+        :param callback: Passed execution object.
+        """
+        filepath = inspect.getfile(callback)
+        trace = tracer(filepath)
+        trace.sample()
+
+        def wrapper(*args, **kwargs):
+            """
+            :return: Instance of the callback.
+            """
+            if clear:
+                trace.clear()
+            callback(*args, **kwargs)
+            trace.sample()
+            trace.report(traceback=traceback, strict=strict, debug=debug)
+            callback.trace = trace
+            return callback
+        return wrapper
+    return callback_wrapper
+
+
