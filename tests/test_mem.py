@@ -27,7 +27,7 @@ class Leak:
     def load(self, count: int = 10):
         """
         This will loop for the number specified in ``count`` loading our test image each time.
-        :param count: Number of times to iterate.
+        param count: Number of times to iterate.
         """
         self.probe.sample()
         while count:
@@ -43,9 +43,9 @@ class Leak:
 LEAK = Leak()
 
 
-def test_basic():
+def test_image():
     """
-    This will test for a basic memory leak.
+    This will test for an image memory leak.
     """
     global HOLD
     global LEAK

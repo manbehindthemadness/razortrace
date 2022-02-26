@@ -56,7 +56,7 @@ class MemTrace:
             self.tracer.start(10)
             self.running = True
 
-    def take_snap(self):
+    def _take_snap(self):
         """
         This will take a memory snapshot.
         """
@@ -64,26 +64,26 @@ class MemTrace:
         self.snapshots.append(snapshot)
         return snapshot
 
-    def comp_snap(self, ln: int = 100, pattern: str = '*ImageTk*', comp: str = 'filename'):
+    def _comp_snap(self, ln: int = 100, pattern: str = '*ImageTk*', comp: str = 'filename'):
         """
         This will compare the passed snap with the one specified in memory.
 
-        :param ln: This is the number of items to produce in our report.
-        :param pattern: Search pattern to pass into tracemalloc.
-        :param comp: Computed ordering key.
+        param ln: This is the number of items to produce in our report.
+        param pattern: Search pattern to pass into tracemalloc.
+        param comp: Computed ordering key.
         """
         filters = [tracemalloc.Filter(inclusive=True, filename_pattern=pattern)]
 
         if len(self.snapshots) > 1:
             filtered_stats = self.snapshots[-1].filter_traces(filters).compare_to(self.snapshots[-2], comp)
-            self.show_stats(filtered_stats, ln)
+            self._show_stats(filtered_stats, ln)
         return self
 
-    def show_snap(self, ln: int = 100):
+    def _show_snap(self, ln: int = 100):
         """
         This will pretty print a snapshot.
 
-        :param ln: This is the number of items to produce in our report.
+        param ln: This is the number of items to produce in our report.
         """
         display_top(self.snapshots[-1], 'filename', ln)
         return self
@@ -98,12 +98,12 @@ class MemTrace:
         linecache.clearcache()  # This is experimental.
 
     @staticmethod
-    def show_stats(stats, ln: int = 100):
+    def _show_stats(stats, ln: int = 100):
         """
         This will print the stats from a series of filtered staps.
 
-        :param stats: Instance of the filtered statistics passed from a snapshot.
-        :param ln: This is the number of items to produce in our report.
+        param stats: Instance of the filtered statistics passed from a snapshot.
+        param ln: This is the number of items to produce in our report.
         """
         for stat in stats[:ln]:
             print("{} new KiB {} total KiB {} new {} total memory blocks: ".format(stat.size_diff / 1024,
@@ -113,21 +113,21 @@ class MemTrace:
             for line in stat.traceback.format():
                 print(line)
 
-    def comp_n_show(self, ln: int = 100):
+    def _comp_n_show(self, ln: int = 100):
         """
         THis will take a snap and compare it with the last.
 
-        :param ln: This is the number of items to produce in our report.
+        param ln: This is the number of items to produce in our report.
         """
         self.cleanup()
         if not self.runner % 50:
             print('trace:' + str(self.runner), '------------------------------------------------------------------')
-            self.take_snap()
-            self.show_snap(ln)
-            self.comp_snap(ln)
+            self._take_snap()
+            self._show_snap(ln)
+            self._comp_snap(ln)
             print('--------------------------------TRACEBACK---------------------------------')
-            self.comp_snap(ln, comp='traceback')
-            self.show_snap(ln)
+            self._comp_snap(ln, comp='traceback')
+            self._show_snap(ln)
             print('-----------------------------------END------------------------------------')
             pass
         self.runner += 1
@@ -139,14 +139,17 @@ class MemTrace:
         """
         This will take a memory snapshot and save it into history.
         """
-        self.take_snap()
+        if not self.running:
+            self.tracer.start(10)
+            self.running = True
+        self._take_snap()
 
     def report(self, traceback: bool = False, strict: bool = True, debug: bool = False):
         """
         This is some memory handling logic we are using to prevent memory leaks.
-        :param traceback: Includes the traceback for each item.
-        :param strict: Determines if we perform a check to confirm each sample is larger than the last (see readme).
-        :param debug: This is a toggle for the unit tests allowing us to see results from within this module.
+        param traceback: Includes the traceback for each item.
+        param strict: Determines if we perform a check to confirm each sample is larger than the last (see readme).
+        param debug: This is a toggle for the unit tests allowing us to see results from within this module.
         """
         filters = [
             tracemalloc.Filter(False, "<frozen importlib._bootstrap>", all_frames=True),
@@ -221,7 +224,7 @@ class MemTrace:
 
     def reset(self):
         """
-        Stops and clears the samples.
+        Terminates sampling and clears the samples.
         """
         self.stop()
         self.clear()
@@ -231,17 +234,17 @@ class MemTrace:
 def probe(traceback: bool = False, strict: bool = False, clear: bool = False, debug: bool = False):
     """
     This is an easy-to-use decorator that will perform a basic memory test.
-    :param traceback: Include tracebacks in report?
-    :param strict: Only show results that never reclaim memory?
-    :param clear: Clears the memory samples each run.
-    :param debug: Include the razortrace folder in results?
+    param traceback: Include tracebacks in report?
+    param strict: Only show results that never reclaim memory?
+    param clear: Clears the memory samples each run.
+    param debug: Include the razortrace folder in results?
     :return: Instance of the callback.
     """
     tracer = MemTrace
 
     def callback_wrapper(callback):
         """
-        :param callback: Passed execution object.
+        param callback: Passed execution object.
         """
         filepath = inspect.getfile(callback)
         trace = tracer(filepath)
@@ -260,5 +263,3 @@ def probe(traceback: bool = False, strict: bool = False, clear: bool = False, de
             return callback
         return wrapper
     return callback_wrapper
-
-
