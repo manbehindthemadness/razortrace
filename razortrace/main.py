@@ -62,6 +62,10 @@ class MemTrace:
     def comp_snap(self, ln: int = 100, pattern: str = '*ImageTk*', comp: str = 'filename'):
         """
         This will compare the passed snap with the one specified in memory.
+
+        :param ln: This is the number of items to produce in our report.
+        :param pattern: Search pattern to pass into tracemalloc.
+        :param comp: Computed ordering key.
         """
         filters = [tracemalloc.Filter(inclusive=True, filename_pattern=pattern)]
 
@@ -73,6 +77,8 @@ class MemTrace:
     def show_snap(self, ln: int = 100):
         """
         This will pretty print a snapshot.
+
+        :param ln: This is the number of items to produce in our report.
         """
         display_top(self.snapshots[-1], 'filename', ln)
         return self
@@ -90,6 +96,9 @@ class MemTrace:
     def show_stats(stats, ln: int = 100):
         """
         This will print the stats from a series of filtered staps.
+
+        :param stats: Instance of the filtered statistics passed from a snapshot.
+        :param ln: This is the number of items to produce in our report.
         """
         for stat in stats[:ln]:
             print("{} new KiB {} total KiB {} new {} total memory blocks: ".format(stat.size_diff / 1024,
@@ -102,6 +111,8 @@ class MemTrace:
     def comp_n_show(self, ln: int = 100):
         """
         THis will take a snap and compare it with the last.
+
+        :param ln: This is the number of items to produce in our report.
         """
         self.cleanup()
         if not self.runner % 50:
@@ -111,7 +122,7 @@ class MemTrace:
             self.comp_snap(ln)
             print('--------------------------------TRACEBACK---------------------------------')
             self.comp_snap(ln, comp='traceback')
-            # self.show_snap(ln)
+            self.show_snap(ln)
             print('-----------------------------------END------------------------------------')
             pass
         self.runner += 1
@@ -125,15 +136,20 @@ class MemTrace:
         """
         self.take_snap()
 
-    def report(self, traceback: bool = False):
+    def report(self, traceback: bool = False, strict: bool = True, debug: bool = False):
         """
         This is some memory handling logic we are using to prevent memory leaks.
+        :param traceback: Includes the traceback for each item.
+        :param strict: Determines if we perform a check to confirm each sample is larger than the last (see readme).
+        :param debug: This is a toggle for the unit tests allowing us to see results from within this module.
         """
         filters = [
             tracemalloc.Filter(False, "<frozen importlib._bootstrap>", all_frames=True),
             tracemalloc.Filter(False, "<frozen importlib._bootstrap_external>", all_frames=True),
             tracemalloc.Filter(False, "<unknown>", all_frames=True),
         ]
+        if not debug:  # Prevent ourselves from showing up in the list.
+            filters.append(tracemalloc.Filter(False, "*razortrace*", all_frames=True))
         self.cleanup()
         print('\n=============================== leaks detected ===============================\n')
         filtered_stats = self.snapshots[-1].filter_traces(filters).compare_to(self.snapshots[-2], 'traceback')
@@ -160,7 +176,10 @@ class MemTrace:
             ordered_sizes = list(stat['sizes'])
             ordered_sizes.sort()
             ordered_sizes.reverse()
-            if not sizes.count(sizes[0]) == len(sizes) and sizes == ordered_sizes:
+            confirmed = sizes == ordered_sizes
+            if not strict:
+                confirmed = True
+            if not sizes.count(sizes[0]) == len(sizes) and confirmed:
                 total = max(sizes)
                 average = sum(sizes) / len(sizes)
                 print(

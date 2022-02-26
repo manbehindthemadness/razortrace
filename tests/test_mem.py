@@ -36,7 +36,7 @@ class Leak:
             self.images.append(img)
             count -= 1
         self.probe.sample()
-        self.probe.report(True)
+        self.probe.report(traceback=True, debug=True)
         # self.probe.comp_n_show(6)
         return self
 
