@@ -61,7 +61,95 @@ file needs to be inspected, tracemalloc will likely be required:* https://docs.p
 Examples
 --------
 
-code blocks and examples here...
+*NOTES:*
+
+   * These examples can be found in the tests folder
+   * Examples will report improperly when executed from a virtual python console.
+
+.. code-block:: python
+
+   import os
+   from pathlib import Path
+   from razortrace import probe
+
+
+   HOLD = list()
+
+
+   @probe(trigger='TRACE_TEXT', traceback=True, clear=True, debug=True)
+   def text():
+       """
+       Creates a memory leak from a text file.
+       """
+       global HOLD
+       with open(Path('tests/text.txt'), "r") as txt:  # <--- Leak
+           for line in txt.readlines():  # <--- Leak
+               HOLD.append(line)
+       for cycle in range(0, 1000):
+           HOLD.append([cycle, HOLD])
+       return
+
+
+   def test_text():
+       """
+       Fires off the above logic into a unit test.
+       """
+       os.environ["TRACE_TEXT"] = "1"  # Enable trace.
+       txt = text()
+       txt.trace.reset()  # Clear memory tracer and samples.
+
+
+.. code-block:: pycon
+
+   >>> \razortrace\tests\test_mem.py line: 76 command: for line in txt.readlines():  # <--- Leak  average: 12.007161458333334 total kb 35.904296875
+
+   >>> 							-----trace-----
+
+   >>> \my-project-dir\lib\site-packages\pluggy\_callers.py:39
+   >>> \my-project-dir\lib\site-packages\_pytest\runner.py:168
+   >>> \my-project-dir\lib\site-packages\_pytest\python.py:1718
+   >>> \my-project-dir\lib\site-packages\pluggy\_hooks.py:265
+   >>> \my-project-dir\lib\site-packages\pluggy\_manager.py:80
+   >>> \my-project-dir\lib\site-packages\pluggy\_callers.py:39
+   >>> \my-project-dir\lib\site-packages\_pytest\python.py:192
+   >>> \razortrace\tests\test_mem.py:88
+   >>> \razortrace\razortrace\main.py:273
+   >>> \razortrace\tests\test_mem.py:76
+
+
+   >>> 							-----sizes-----
+
+   >>> 0.0546875 0.0625 35.904296875
+
+
+   >>> --------------------------------------------------------------------------
+
+   >>> \razortrace\tests\test_mem.py line: 75 command: with open(Path(HERE + '/text.txt'), "r") as txt:  # <--- Leak average: 0.12027994791666667 total kb 0.2763671875
+
+   >>> 							-----trace-----
+
+   >>> \my-project-dir\lib\site-packages\pluggy\_callers.py:39
+   >>> \my-project-dir\lib\site-packages\_pytest\runner.py:168
+   >>> \my-project-dir\lib\site-packages\_pytest\python.py:1718
+   >>> \my-project-dir\lib\site-packages\pluggy\_hooks.py:265
+   >>> \my-project-dir\lib\site-packages\pluggy\_manager.py:80
+   >>> \my-project-dir\lib\site-packages\pluggy\_callers.py:39
+   >>> \my-project-dir\lib\site-packages\_pytest\python.py:192
+   >>> \razortrace\tests\test_mem.py:88
+   >>> \razortrace\razortrace\main.py:273
+   >>> \razortrace\tests\test_mem.py:75
+
+
+   >>> 							-----sizes-----
+
+   >>> 0.046875 0.046875 0.0625 0.0625 0.2265625 0.2763671875
+
+
+   >>> --------------------------------------------------------------------------
+
+
+   >>> ==========================================================================
+
 
 Installation
 ------------

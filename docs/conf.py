@@ -53,7 +53,7 @@ html_css_files = [
 ]
 
 html_logo = "_static/razor.png"
-# html_favicon = "resources/favicon.ico"
+# html_favicon = "_static/favicon.ico"
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
