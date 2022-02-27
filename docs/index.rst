@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Documentation: razortrace
+Razortrace
 ======================================
 
 .. toctree::
@@ -29,7 +29,7 @@ The main library requires no additional packages; however, pytest and PIL are ne
 Usage
 -----
 
-Razor trace can be used as a decorator *(recommended)* or alternatively, as an
+Razortrace can be used as a decorator *(recommended)* or alternatively as an
 imported class *(useful for more specific scenarios)*. Leak detection is achieved by starting tracemalloc and
 capturing a memory snapshot. Once arbitrary code has completed execution a second snapshot is taken and compared
 against the first. Results are filtered based on two sets of criteria:
@@ -38,21 +38,24 @@ against the first. Results are filtered based on two sets of criteria:
 * Execution has not reclaimed any memory throughout the sampling process *(configurable)*.
 
 When used as a decorator, each probe is activates by a trigger in the form of an environment variable.
-This allows for many tests to be selectively placed throughout a project with minimal alteration of the business logic.
+This allows cherry-picking of many selectively placed tests throughout a project with minimal alteration of the business logic.
+
+*NOTE: Only detections originating from within the working directory are returned, if a dependency or extraneous
+file needs to be inspected, tracemalloc will likely be required, see:* https://docs.python.org/3/library/tracemalloc.html
 
 **Parameters**
 
-* ``trigger`` An environment variable if returned ``True`` will enable the trace.
+* ``trigger`` An environment variable that enables the trace based on its truth-state
    * default - ``str()``
-* ``traceback`` Specifies the inclusion of tracebacks in the final report.
+* ``traceback`` Specifies the inclusion of tracebacks in the final report
    * default - ``False``
-* ``clear`` If set ``True`` the memory trace will be cleared after each execution.
+* ``clear`` Specifies the memory trace will be cleared after each execution
    * default - ``False``
-* ``strict`` Shows only executions that have **not** reclaimed memory during the sampling process.
+* ``strict`` Shows only executions that have **not** reclaimed memory during the sampling process
    * default - ``True``
-* ``debug`` If set ``True`` the final report will include the memory samples recorded in the form of a ``list()`` in addition to allowing trace items from within the libraries folder structure.
+* ``debug`` Specifies the final report will include the recorded memory samples in addition to allowing trace items from within the libraries own folder structure
    * default - ``False``
-* ``here`` The current working directory *(only required when initializing the probe as a class)*.
+* ``here`` The current working directory *(only required when initializing the probe as a class)*
    * default - root install directory
 
 Examples

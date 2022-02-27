@@ -6,7 +6,7 @@ We are going to use PIL to load an image into a list creating a predictable memo
 """
 import os
 from pathlib import Path
-from PIL import Image
+from PIL import Image  # noqa
 from razortrace import Probe, probe
 
 
