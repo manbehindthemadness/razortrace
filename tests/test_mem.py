@@ -28,13 +28,16 @@ class Leak:
         """
         This will loop for the number specified in ``count`` loading our test image each time.
         param count: Number of times to iterate.
+
+        * test
+        <---- no worky..
         """
-        self.probe.sample()
+        self.probe.sample()  # <--- Leak ---------------------------------------------
         while count:
             img = Image.open(IMG)
-            self.images.append(img)
+            self.images.append(img)  # <--- Leak ---------------------------------------------
             count -= 1
-        self.probe.sample()
+        self.probe.sample()  # <--- Leak ---------------------------------------------
         self.probe.report(traceback=True, debug=True)
         del img
         return self.probe.filtered_statistics
@@ -57,7 +60,10 @@ def test_image():
     stats = list(leak.load(1000))
     leak.clear()
     del leak
-    assert len(stats) == 3
+    lines = list()
+    for stat in stats:
+        lines.append(stat['line'])
+    assert lines == [37, 35, 40]
 
 
 @probe(trigger='TRACE_TEXT', traceback=True, clear=True, debug=True)
@@ -66,8 +72,8 @@ def text():
     Creates a memory leak from a text file.
     """
     global HOLD
-    with open(Path(HERE + '/text.txt'), "r") as txt:
-        for line in txt.readlines():
+    with open(Path(HERE + '/text.txt'), "r") as txt:  # <--- Leak ---------------------------------------------
+        for line in txt.readlines():  # <--- Leak ---------------------------------------------
             HOLD.append(line)
     for cycle in range(0, 1000):
         HOLD.append([cycle, HOLD])
@@ -79,10 +85,13 @@ def test_text():
     Fires off the above logic into a unit test.
     """
     os.environ["TRACE_TEXT"] = "1"  # Enable trace.
-    txt = text()
+    txt = text()  # <--- Leak ---------------------------------------------
     stats = txt.trace.filtered_statistics
     txt.trace.reset()
-    assert len(stats) == 2
+    lines = list()
+    for stat in stats:
+        lines.append(stat['line'])
+    assert lines == [76, 75]
 
 
 def test_disable():
