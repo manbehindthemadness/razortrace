@@ -41,7 +41,7 @@ When used as a decorator, each probe is activates by a trigger in the form of an
 This allows cherry-picking of many selectively placed tests throughout a project with minimal alteration of the business logic.
 
 *NOTE: Only detections originating from within the working directory are returned, if a dependency or extraneous
-file needs to be inspected, tracemalloc will likely be required, see:* https://docs.python.org/3/library/tracemalloc.html
+file needs to be inspected, tracemalloc will likely be required:* https://docs.python.org/3/library/tracemalloc.html
 
 **Parameters**
 

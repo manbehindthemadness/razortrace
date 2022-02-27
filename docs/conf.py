@@ -11,7 +11,7 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 
-project = 'razortrace'
+project = 'Razortrace'
 copyright = '2022, Kevin Eales'
 author = 'Kevin Eales'
 
@@ -52,7 +52,7 @@ html_css_files = [
     "css/light.css"
 ]
 
-# html_logo = "resources/pillow-logo.png"
+html_logo = "_static/razor.png"
 # html_favicon = "resources/favicon.ico"
 
 latex_elements = {
@@ -74,13 +74,13 @@ latex_elements = {
 }
 
 latex_documents = [
-    (master_doc, 'razortrace.tex', 'razortrace Documentation',
+    (master_doc, 'Razortrace.tex', 'razortrace Documentation',
      'Kevin (eales)', 'manual'),
 ]
 
 texinfo_documents = [
-    (master_doc, 'razortrace', 'razortrace Documentation',
-     author, 'razortrace', 'Straightforward memory leak detection.',
+    (master_doc, 'Razortrace', 'razortrace Documentation',
+     author, 'Razortrace', 'Straightforward memory leak detection.',
      'Miscellaneous'),
 ]
 
