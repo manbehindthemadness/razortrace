@@ -6,8 +6,9 @@ razortrace documentation build configuration file
 
 import os
 import sys
-# import razortrace
 import sphinx_rtd_theme
+
+
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -19,13 +20,9 @@ version = '0.1'
 release = '0.1'
 
 extensions = [
-    # "sphinx_copybutton",
-    # "sphinx_issues",
-    # "sphinx_removed_in",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
-    # "sphinxext.opengraph",
 ]
 
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
@@ -53,7 +50,7 @@ html_css_files = [
 ]
 
 html_logo = "_static/razor.png"
-# html_favicon = "_static/favicon.ico"
+html_favicon = "_static/favicon.ico"
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').

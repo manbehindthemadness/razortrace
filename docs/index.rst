@@ -92,7 +92,7 @@ Examples
 
    def test_text():
        """
-       Fires off the above logic into a unit test.
+       Fires off the above logic.
        """
        os.environ["TRACE_TEXT"] = "1"  # Enable trace.
        txt = text()
