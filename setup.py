@@ -27,9 +27,10 @@ with open(os.path.join(here, 'README.md')) as f:
 URL = "https://github.com/manbehindthemadness/razortrace"
 DESCRIPTION = "Straight forward memory leak detection"
 LONG_DESCRIPTION = \
-"""
-Long description here
-"""
+    """
+    Razortrace is a memory diagnostic tool based on the ``tracemalloc`` library. It's aim is to provide rapid identification 
+    of memory leaks and produce straightforward, human-readable reports.
+    """
 
 
 def get_packages(package):
@@ -46,12 +47,6 @@ def get_packages(package):
 if sys.version_info < (3, 5):
     sys.exit('Sorry, Python < 3.5 is not supported')
 
-install_requires = [
-    "Pillow >= 8",
-    "pytest",
-    "sphinx",
-]
-
 setup(
     name="razortrace",
     version=get_version("razortrace"),
@@ -64,7 +59,6 @@ setup(
     url=URL,
     license="MIT",
     packages=get_packages('razortrace'),
-    install_requires=install_requires,
     include_package_data=True,
     # package_data={'razortrace': ['defaults.ini', 'err.png']}
 )

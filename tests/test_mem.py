@@ -29,8 +29,8 @@ class Leak:
         This will loop for the number specified in ``count`` loading our test image each time.
         param count: Number of times to iterate.
 
-        * test
-        <---- no worky..
+
+
         """
         self.probe.sample()  # <--- Leak ---------------------------------------------
         while count:
