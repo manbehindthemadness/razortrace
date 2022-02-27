@@ -21,11 +21,8 @@ release = '0.1'
 
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
 ]
-
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
 templates_path = ['_templates']
 source_suffix = '.rst'
@@ -115,13 +112,8 @@ def setup(app):
     :param app:
     :return:
     """
-    # app.add_js_file("js/script.js")
-    # app.add_css_file("css/styles.css")
-    # app.add_css_file("css/dark.css")
-    # app.add_css_file("css/light.css")
     app.connect('builder-inited', run_apidoc)
 
-issues_github_path = '/razortrace'
 
 autoclass_content = 'both'
 autodoc_mock_imports = ["razortrace.tools"]
