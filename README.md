@@ -1,4 +1,7 @@
 # Razortrace
+
+![](docs/_static/razor.png)
+
 A memory tracer for python
 ======================================
 
@@ -7,6 +10,7 @@ Home
 ------
 
 https://razortrace.readthedocs.io/en/latest/
+
 https://pypi.org/project/razortrace/0.1/
 
 Description
