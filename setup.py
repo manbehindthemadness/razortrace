@@ -2,7 +2,6 @@
 """
 Setup
 """
-import re
 import sys
 import os
 from setuptools import setup
@@ -10,13 +9,11 @@ from setuptools import setup
 NAME = "razortrace"
 
 
-def get_version(package):
-    """
-    Return package version as listed in `__version__` in `init.py`.
-    """
-    path = os.path.join(package, "__init__.py")
-    init_py = open(path, "r", encoding="utf8").read()
-    return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)  # noqa
+def get_version(*args):
+    version_file = "razortrace/__version__.py"
+    with open(version_file) as f:
+        exec(compile(f.read(), version_file, "exec"))
+    return locals()["__version__"]
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -60,5 +57,5 @@ setup(
     license="MIT",
     packages=get_packages('razortrace'),
     include_package_data=True,
-    # package_data={'razortrace': ['defaults.ini', 'err.png']}
+    package_data={'razortrace': []}
 )

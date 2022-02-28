@@ -1,3 +1,4 @@
 /tests/.pytest_cache/
 /docs/_build/
 /docs/source/
+/dist/
