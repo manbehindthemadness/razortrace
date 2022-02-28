@@ -34,8 +34,8 @@ class Leak:
         """
         self.probe.sample()  # <--- Leak ---------------------------------------------
         while count:
-            img = Image.open(IMG)
-            self.images.append(img)  # <--- Leak ---------------------------------------------
+            img = Image.open(IMG)  # <--- Leak ---------------------------------------------
+            self.images.append(img)
             count -= 1
         self.probe.sample()  # <--- Leak ---------------------------------------------
         self.probe.report(traceback=True, debug=True)
