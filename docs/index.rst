@@ -15,7 +15,7 @@ Home
 
 https://github.com/manbehindthemadness/razortrace
 
-https://pypi.org/project/razortrace/
+https://pypi.org/project/razortrace
 
 Description
 -----------
@@ -42,8 +42,9 @@ against the first. Results are filtered based on two sets of criteria:
 When used as a decorator, each probe is activates by a trigger in the form of an environment variable.
 This allows cherry-picking of many selectively placed tests throughout a project with minimal alteration of the business logic.
 
-*NOTE: Only detections originating from within the working directory are returned, if a dependency or extraneous
-file needs to be inspected, tracemalloc will likely be required:* https://docs.python.org/3/library/tracemalloc.html
+*NOTES:*
+
+   * Only detections originating from within the working directory are returned, if a dependency or extraneous file needs to be inspected, tracemalloc will likely be required: https://docs.python.org/3/library/tracemalloc.html
 
 **Parameters**
 
@@ -58,7 +59,7 @@ file needs to be inspected, tracemalloc will likely be required:* https://docs.p
 * ``debug`` Specifies the final report will include the recorded memory samples in addition to allowing trace items from within the libraries own folder structure
    * default - ``False``
 * ``here`` The current working directory *(only required when initializing the probe as a class)*
-   * default - root install directory
+   * default - root installation directory
 
 Examples
 --------
@@ -67,6 +68,7 @@ Examples
 
    * These examples can be found in the tests folder
    * Examples will report improperly when executed from a virtual python console.
+   * If two traces are active simultaneously it is likely they will capture each other and provide undesired results.
 
 .. code-block:: python
 
