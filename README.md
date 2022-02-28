@@ -12,7 +12,7 @@ Home
 
 https://razortrace.readthedocs.io/en/latest/
 
-https://pypi.org/project/razortrace/0.1/
+https://pypi.org/project/razortrace/
 
 Description
 -----------

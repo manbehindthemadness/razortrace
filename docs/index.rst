@@ -15,7 +15,7 @@ Home
 
 https://github.com/manbehindthemadness/razortrace
 
-https://pypi.org/project/razortrace/0.1/
+https://pypi.org/project/razortrace/
 
 Description
 -----------

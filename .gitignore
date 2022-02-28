@@ -2,3 +2,6 @@
 /docs/_build/
 /docs/source/
 /dist/
+/build/
+/.pytest_cache/
+/razortrace.egg-info/

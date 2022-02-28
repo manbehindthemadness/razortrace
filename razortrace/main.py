@@ -192,8 +192,10 @@ class MemTrace:
                     stat['file'],
                     'line:', stat['line'],
                     'command:', stat['command'],
-                    'average:', average,
-                    'total kb', total,
+                    '\n',
+                    '\t• average consumption kb:', average,
+                    '\n'
+                    '\t• total consumption kb', total,
                     '\n'
                 )
                 if traceback:
