@@ -1,4 +1,4 @@
-# razortrace
+# Razortrace
 A memory tracer for python
 ======================================
 
