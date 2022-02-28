@@ -48,7 +48,7 @@ class MemTrace:
     filtered_statistics = list()
     tracer = tracemalloc
 
-    def __init__(self, here: [str, None] = None):
+    def __init__(self, here: str = ''):
         self.snapshots = list()
         if here:
             self.here = str(here)
