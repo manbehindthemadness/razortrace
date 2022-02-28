@@ -6,7 +6,7 @@ A memory tracer for python
 Home
 ------
 
-https://github.com/manbehindthemadness/razortrace
+https://razortrace.readthedocs.io/en/latest/
 https://pypi.org/project/razortrace/0.1/
 
 Description
