@@ -38,12 +38,12 @@ html_static_path = ['_static']
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 htmlhelp_basename = 'razortrace documentation'
 html_js_files = [
-    "js/script.js"
+    "script.js"
 ]
 html_css_files = [
-    "css/styles.css",
-    "css/dark.css",
-    "css/light.css"
+    "styles.css",
+    "dark.css",
+    "light.css"
 ]
 
 html_logo = "_static/razor.png"
