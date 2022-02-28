@@ -1,6 +1,7 @@
 # Razortrace
 
-![](docs/_static/razor.png)
+<img src="https://github.com/manbehindthemadness/razortrace/blob/main/docs/_static/razor.png?raw=true" width="300" alt="">
+
 
 A memory tracer for python
 ======================================
