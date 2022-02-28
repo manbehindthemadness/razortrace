@@ -4,14 +4,14 @@
    contain the root `toctree` directive.
 
 Razortrace
-======================================
+==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 0
    :caption: Contents:
 
-Home
-------
+Links
+-----
 
 https://github.com/manbehindthemadness/razortrace
 
@@ -177,6 +177,7 @@ Disclaimer
 
 This library is still in development, please use at your own risk and test sufficiently before using it in a
 production environment.
+
 
 Indices and tables
 ==================

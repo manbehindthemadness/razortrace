@@ -29,7 +29,14 @@ source_suffix = '.rst'
 master_doc = 'index'
 language = None
 
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = [
+    '_build',
+    'Thumbs.db',
+    '.DS_Store',
+    "source/modules.rst",
+    "source/razortrace.rst",
+    "source/razortrace.main.rst"
+]
 pygments_style = 'sphinx'
 todo_include_todos = False
 
@@ -45,6 +52,24 @@ html_css_files = [
     "dark.css",
     "light.css"
 ]
+
+html_theme_options = {
+    # 'analytics_id': 'G-XXXXXXXXXX',  #  Provided by Google in your dashboard
+    # 'analytics_anonymize_ip': False,
+    # 'logo_only': True,
+    'display_version': False,
+    # 'prev_next_buttons_location': 'bottom',
+    # 'style_external_links': False,
+    # 'vcs_pageview_mode': '',
+    # 'style_nav_header_background': 'white',
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 0,
+    'includehidden': True,
+    'titles_only': False
+}
+
 
 html_logo = "_static/razor.png"
 html_favicon = "_static/favicon.ico"
